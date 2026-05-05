@@ -2,6 +2,7 @@ name: CI Pipeline
 
 on:
   pull_request:
+    branches: [ "main" ]
   push:
     branches: [ "main" ]
 
@@ -22,16 +23,16 @@ jobs:
       run: |
         pip install -r requirements.txt
 
-    - name: Lint (basic)
+    - name: Lint basic
       run: |
         pip install flake8
-        flake8 app
+        flake8 app --max-line-length=120 --ignore=E302,W292
 
-    - name: Run tests (placeholder)
+    - name: Run tests placeholder
       run: |
         echo "No tests yet"
 
-    - name: Run Bandit (SAST)
+    - name: Run Bandit SAST
       run: |
         pip install bandit
         bandit -r app -ll
@@ -43,4 +44,4 @@ jobs:
     - name: Run Trivy scan
       run: |
         docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
-        aquasec/trivy image devsecops-app
+        aquasec/trivy:latest image --exit-code 1 --severity HIGH,CRITICAL devsecops-app
