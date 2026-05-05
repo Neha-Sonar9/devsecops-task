@@ -1,3 +1,4 @@
+from prometheus_fastapi_instrumentator import Instrumentator
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
@@ -17,6 +18,8 @@ API_KEY = os.getenv("API_KEY", "mysecretkey")
 api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
 
 app = FastAPI()
+
+Instrumentator().instrument(app).expose(app)
 
 limiter = Limiter(key_func=get_remote_address)
 app.state.limiter = limiter
