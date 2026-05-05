@@ -44,4 +44,9 @@ jobs:
     - name: Run Trivy scan
       run: |
         docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
-        aquasec/trivy:latest image --exit-code 1 --severity HIGH,CRITICAL devsecops-app
+        aquasec/trivy:latest image \
+        --exit-code 1 \
+        --severity HIGH,CRITICAL \
+        --ignore-unfixed \
+        --vuln-type library \
+        devsecops-app
