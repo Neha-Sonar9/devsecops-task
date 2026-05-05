@@ -1,0 +1,46 @@
+name: CI Pipeline
+
+on:
+  pull_request:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-and-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Lint (basic)
+      run: |
+        pip install flake8
+        flake8 app
+
+    - name: Run tests (placeholder)
+      run: |
+        echo "No tests yet"
+
+    - name: Run Bandit (SAST)
+      run: |
+        pip install bandit
+        bandit -r app -ll
+
+    - name: Build Docker image
+      run: |
+        docker build -t devsecops-app .
+
+    - name: Run Trivy scan
+      run: |
+        docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+        aquasec/trivy image devsecops-app
