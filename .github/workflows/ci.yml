@@ -39,7 +39,7 @@ jobs:
 
     - name: Build Docker image
       run: |
-        docker build -t devsecops-app .
+        docker build --no-cache -t devsecops-app .
 
     - name: Run Trivy scan
       run: |
