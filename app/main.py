@@ -1,3 +1,5 @@
+import asyncio
+from contextlib import asynccontextmanager
 from prometheus_fastapi_instrumentator import Instrumentator
 from slowapi import Limiter
 from slowapi.util import get_remote_address
@@ -17,7 +19,16 @@ from . import models, schemas
 API_KEY = os.getenv("API_KEY", "mysecretkey")
 api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
 
-app = FastAPI()
+shutdown_timeout = int(os.getenv("SHUTDOWN_TIMEOUT_SECONDS", "10"))
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    yield
+    print(f"Shutdown started. Waiting up to {shutdown_timeout}s for in-flight requests.")
+    await asyncio.sleep(min(shutdown_timeout, 10))
+    print("Shutdown complete.")
+
+app = FastAPI(lifespan=lifespan)
 
 Instrumentator().instrument(app).expose(app)
 
