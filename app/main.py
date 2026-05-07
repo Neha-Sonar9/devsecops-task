@@ -35,21 +35,6 @@ Instrumentator().instrument(app).expose(app)
 limiter = Limiter(key_func=get_remote_address)
 app.state.limiter = limiter
 
-# Wait for DB to be ready
-connected = False
-for i in range(10):
-    try:
-        Base.metadata.create_all(bind=engine)
-        print("Database connected!")
-        connected = True
-        break
-    except OperationalError:
-        print("Database not ready, retrying...")
-        time.sleep(3)
-
-if not connected:
-    raise Exception("Could not connect to database")
-
 # Dependency
 def get_db():
     db = SessionLocal()
