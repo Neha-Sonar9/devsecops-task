@@ -9,11 +9,9 @@ from fastapi import Request
 from fastapi.security.api_key import APIKeyHeader
 from fastapi import Security
 import os
-import time
-from sqlalchemy.exc import OperationalError
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
-from .database import SessionLocal, engine, Base
+from .database import SessionLocal
 from . import models, schemas
 
 API_KEY = os.getenv("API_KEY", "mysecretkey")
