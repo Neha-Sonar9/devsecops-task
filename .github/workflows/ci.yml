@@ -66,14 +66,14 @@ jobs:
     - name: Build and push image to GHCR
       if: github.ref == 'refs/heads/main'
       run: |
-        IMAGE_NAME=ghcr.io/${{ github.repository }}/devsecops-app
+        IMAGE_NAME=$(echo "ghcr.io/${{ github.repository }}/devsecops-app" | tr '[:upper:]' '[:lower:]')
         docker build --no-cache -t $IMAGE_NAME:${{ github.sha }} .
         docker push $IMAGE_NAME:${{ github.sha }}
 
     - name: Generate SBOM
       if: github.ref == 'refs/heads/main'
-      uses: anchore/sbom-action@v0
-      with:
-        image: ghcr.io/${{ github.repository }}/devsecops-app:${{ github.sha }}
-        format: spdx-json
-        output-file: sbom.spdx.json
+      run: |
+        IMAGE_NAME=$(echo "ghcr.io/${{ github.repository }}/devsecops-app" | tr '[:upper:]' '[:lower:]')
+        docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+          -v $PWD:/output \
+          anchore/syft:latest $IMAGE_NAME:${{ github.sha }} -o spdx-json=/output/sbom.spdx.json
