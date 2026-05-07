@@ -341,16 +341,6 @@ The infrastructure configuration was intentionally kept lightweight for assessme
 
 ---
 
-# Loom Walkthrough
-
-Add Loom walkthrough link here:
-
-```text
-<LOOM_VIDEO_LINK>
-```
-
----
-
 # Assumptions
 
 - Local development environment only
